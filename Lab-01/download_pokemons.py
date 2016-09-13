@@ -8,7 +8,7 @@ baseURL = "https://skiplagged.com/api/pokemon.php?bounds={},{},{},{}"
 work_queue = queue.Queue(100000)
 file_lock = threading.Lock()
 work_queue_lock = threading.Lock()
-increment = 30
+increment = 200
 
 class downloadData(threading.Thread):
     def __init__(self, work_queue):
@@ -21,10 +21,11 @@ class downloadData(threading.Thread):
             lon, lat = work_queue.get()
             print(lon, lat)
             work_queue_lock.release()
-            URL = baseURL.format(lon/1000,
-                                 (lon+increment)/1000,
-                                 lat/1000,
-                                 (lat+increment)/1000)
+            URL = baseURL.format(lat/1000,
+                                 lon/1000,
+                                 (lat+increment)/1000,
+                                 (lon+increment)/1000)
+            print(URL)
             request_epoch = time.time()
             response = urllib.request.urlopen(URL)
             content = response.read()
@@ -38,14 +39,13 @@ class downloadData(threading.Thread):
             except KeyError:
                 pass
             file_lock.release()
-        print("Thread finished!")
 
 
 # Lon and Lat bases on new york (great maps)
 threads = []
 while True:
-    for lon in range(-74100, -73500, increment):
-        for lat in range(40500, 41000, increment):
+    for lon in range(-75000, -70000, increment): # Was 74100 to 73500
+        for lat in range(38000, 43000, increment): # Was 40500 to 41000
             work_queue.put((lon, lat))
     for _ in range(16):
         thread = downloadData(work_queue)
