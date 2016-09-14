@@ -4,9 +4,6 @@ from operator import itemgetter
 import sys
 import json
 
-#import matplotlib.pyplot as plt
-from datetime import datetime
-
 
 rpf = {}
 lavanderTownMap = {}
@@ -14,7 +11,6 @@ minLong = -75
 minLat = 38
 total ={}
 
-#pokegrid = [[0]*(5000/0.2) for x in range((5000/0.2))]
 # input comes from STDIN
 for line in sys.stdin:
     try:
@@ -44,8 +40,10 @@ for line in sys.stdin:
         rpf[hadoop_id] = [pokemon_data["expires"]]
 
     #print(pokemon_data)
-    x = int((pokemon_data["latitude"] - minLat) * 200)
-    y = int(abs(pokemon_data["longitude"] - minLong) * 200)
+    #x = int(pokemon_data["latitude"] - minLat) * 200)
+    #y = int(abs(pokemon_data["longitude"] - minLong) * 200)
+    x = round(pokemon_data["latitude"],2)
+    y = round(pokemon_data["longitude"],2)
 
     try:
         lavanderTownMap[(pokemon_data["pokemon_name"],x,y)] += 1

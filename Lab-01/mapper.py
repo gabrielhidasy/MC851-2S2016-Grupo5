@@ -14,7 +14,7 @@ for line in sys.stdin:
     # TODO: Search for pokemon ids (will require table)
     if pokedata_full["pokemon_name"] not in pokemon_target:
         continue
-    for key in ["pokemon_id", "latitude", "longitude", "expires"]:
+    for key in ["pokemon_id", "latitude", "longitude", "expires", "pokemon_name"]:
         pokedata[key] = pokedata_full[key]
     record_id = (10000*pokedata["pokemon_id"] +
                  1000*pokedata["latitude"] +
