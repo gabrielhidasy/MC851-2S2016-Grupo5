@@ -12,6 +12,7 @@ rpf = {}
 lavanderTownMap = {}
 minLong = -75
 minLat = 38
+total ={}
 
 #pokegrid = [[0]*(5000/0.2) for x in range((5000/0.2))]
 # input comes from STDIN
@@ -52,4 +53,10 @@ for line in sys.stdin:
         lavanderTownMap[(pokemon_data["pokemon_name"],x,y)] = 1
 
 for (name,x,y) in sorted(lavanderTownMap):
+    try:
+        total[name] += 1
+    except KeyError:
+        total[name] = 1
     print ("{key} : {value}".format(key=(name,x,y), value=lavanderTownMap[(name,x,y)]))
+
+print("Total = {value}".format(value=total))
