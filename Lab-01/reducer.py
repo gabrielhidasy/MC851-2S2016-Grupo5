@@ -4,12 +4,15 @@ from operator import itemgetter
 import sys
 import json
 
-import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from datetime import datetime
 
 
 rpf = {}
+lavanderTownMap = {}
+minLong = int(-75)
+minLat = int(38)
+
 #pokegrid = [[0]*(5000/0.2) for x in range((5000/0.2))]
 # input comes from STDIN
 for line in sys.stdin:
@@ -38,6 +41,14 @@ for line in sys.stdin:
         rpf[hadoop_id].append(pokemon_data["expires"])
     except KeyError:
         rpf[hadoop_id] = [pokemon_data["expires"]]
-    
-    print(pokemon_data)
- 
+
+    #print(pokemon_data)
+    y = int((pokemon_data["latitude"] - minLat) * 200)
+    x = int(abs(pokemon_data["longitude"] - minLong) * 200)
+
+    try:
+        lavanderTownMap[(x,y)] += 1
+    except KeyError:
+        lavanderTownMap[(x,y)] = 1
+
+print(lavanderTownMap)
