@@ -10,8 +10,8 @@ from datetime import datetime
 
 rpf = {}
 lavanderTownMap = {}
-minLong = int(-75)
-minLat = int(38)
+minLong = -75
+minLat = 38
 
 #pokegrid = [[0]*(5000/0.2) for x in range((5000/0.2))]
 # input comes from STDIN
@@ -43,12 +43,13 @@ for line in sys.stdin:
         rpf[hadoop_id] = [pokemon_data["expires"]]
 
     #print(pokemon_data)
-    y = int((pokemon_data["latitude"] - minLat) * 200)
-    x = int(abs(pokemon_data["longitude"] - minLong) * 200)
+    x = int((pokemon_data["latitude"] - minLat) * 200)
+    y = int(abs(pokemon_data["longitude"] - minLong) * 200)
 
     try:
-        lavanderTownMap[(x,y)] += 1
+        lavanderTownMap[(pokemon_data["pokemon_name"],x,y)] += 1
     except KeyError:
-        lavanderTownMap[(x,y)] = 1
+        lavanderTownMap[(pokemon_data["pokemon_name"],x,y)] = 1
 
-print(lavanderTownMap)
+for (name,x,y) in sorted(lavanderTownMap):
+    print ("{key} : {value}".format(key=(name,x,y), value=lavanderTownMap[(name,x,y)]))
