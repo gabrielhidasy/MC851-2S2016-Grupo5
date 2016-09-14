@@ -45,7 +45,7 @@ class downloadData(threading.Thread):
 threads = []
 while True:
     for lon in range(-75000, -70000, increment): # Was 74100 to 73500
-        for lat in range(38000, 43000, increment): # Was 40500 to 41000
+        for lat in range(40000, 45000, increment): # Was 40500 to 41000
             work_queue.put((lon, lat))
     for _ in range(16):
         thread = downloadData(work_queue)
