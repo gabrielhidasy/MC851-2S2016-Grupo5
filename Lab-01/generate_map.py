@@ -24,7 +24,7 @@ map.drawmeridians(numpy.arange(0, 360, 0.3))
 map.drawparallels(numpy.arange(-90, 90, 0.3))
 map.drawmapboundary()
 
-color_list = ["red", "blue", "green", "yellow", "orange", "purple", "black", "white"]
+color_list = ["green", "red", "yellow", "blue", "orange", "purple", "black", "white"]
 color_n = 0
 color_table = {}
 for line in sys.stdin:
@@ -34,8 +34,6 @@ for line in sys.stdin:
         position = ast.literal_eval(position)
         color = ""
         do_label = False
-        if position[0] not in name_list:
-            name_list.append(position[0])
         if position[0] in color_table:
             color = color_table[position[0]]
         else:
@@ -51,7 +49,7 @@ for line in sys.stdin:
                      "D",
                      color=color,
                      markersize=10,
-                     alpha=0.8,
+                     alpha=0.5,
                      latlon=True,
                      label=position[0])
             print(color)
@@ -69,4 +67,4 @@ matplotlib.pyplot.legend()
 matplotlib.pyplot.show()
 #plt.savefig('map.png')
 
-    
+
