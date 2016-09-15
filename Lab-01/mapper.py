@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Mapper application for pokemon filter
 # This mapper filters out pokemons that are not being searched
