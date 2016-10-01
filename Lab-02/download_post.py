@@ -4,6 +4,14 @@ import urllib
 import urllib2
 import re
 import json
+from pyspark import SparkContext, SparkConf
+from pyspark.streaming import StreamingContext
+#import cv2
+
+sc = SparkContext("local[4]", "NetworkWordCount")
+ssc = StreamingContext(sc, 1)
+
+#surf = cv2.SURF(400)
 
 title_regex = re.compile(r"<title>(.*)</title>", flags=re.MULTILINE)
 image_regex = re.compile(r"<link rel=\"image_src\" href=\"(.*)\" />", flags=re.MULTILINE)
@@ -17,23 +25,42 @@ comment_data = {
     'order' : 'score'
     }
 
-for URL in sys.stdin:
-    post_id = URL.split("/")[4][:7]
-    print(post_id)
-    request = urllib2.urlopen(URL)
-    raw_post = request.read()
-    post_title = title_regex.search(raw_post).group(1)
-    image_url = image_regex.search(raw_post).group(1)
-    points = int(points_regex.search(raw_post).group(1))
-    print(post_title)
-    print(image_url)
-    print(points)
-    this_comment = comment_data.copy()
-    this_comment["url"] = this_comment["url"].format(post_id)
-    this_comment_url = "{}?{}".format(comment_url, urllib.urlencode(this_comment))
-    print(this_comment_url)
-    request = urllib2.urlopen(this_comment_url)
-    raw_comments = json.loads(request.read())["payload"]
-    num_comments = int(raw_comments["total"])
-    raw_comments = raw_comments["comments"]
-    comments = [(x["user"]["displayName"], x["text"]) for x in raw_comments]
+def download_post(URL):
+    try:
+        post_id = URL.split("/")[4][:7]
+        print("Called with post_id = {}", post_id)
+        request = urllib2.urlopen(URL)
+        raw_post = request.read()
+        post_title = title_regex.search(raw_post).group(1)
+        image_url = image_regex.search(raw_post).group(1)
+        points = int(points_regex.search(raw_post).group(1))
+        request = urllib2.urlopen(image_url)
+        image = request.read()
+        this_comment = comment_data.copy()
+        this_comment["url"] = this_comment["url"].format(post_id)
+        this_comment_url = "{}?{}".format(comment_url, urllib.urlencode(this_comment))
+        request = urllib2.urlopen(this_comment_url)
+        raw_comments = json.loads(request.read())["payload"]
+        num_comments = int(raw_comments["total"])
+        raw_comments = raw_comments["comments"]
+        comments = [(x["user"]["displayName"], x["text"]) for x in raw_comments]
+        image_descriptor = 0
+        return (post_id, post_title, points, image_descriptor, comments, 2)
+    except Exception as e:
+        with open("exlog", "a+") as f:
+            f.write(str(e)+"\n")
+        return ()
+
+
+URLs = ssc.socketTextStream("localhost", 9999)
+print(URLs.count())
+if URLs.count():
+        posts = URLs.map(download_post)
+        posts.saveAsTextFiles("posts-","dat")
+
+ssc.start()
+ssc.awaitTermination()
+
+
+#URLs = ["http://9gag.com/gag/aopoK4x"]
+#print(map(download_post, URLs))
