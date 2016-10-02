@@ -6,12 +6,19 @@ import re
 import json
 from pyspark import SparkContext, SparkConf
 from pyspark.streaming import StreamingContext
-#import cv2
+import numpy as np
+import cv2
+
+def url_to_image(url):
+    # Download the image, convert to numpy, read to OpenCV
+    resp = urllib2.urlopen(url)
+    image = np.asarray(bytearray(resp.read()), dtype="uint8")
+    image = cv2.imdecode(umage, cv2.IMREAD_COLOR)
+    return image
 
 sc = SparkContext("local[4]", "NetworkWordCount")
 ssc = StreamingContext(sc, 1)
 
-#surf = cv2.SURF(400)
 
 title_regex = re.compile(r"<title>(.*)</title>", flags=re.MULTILINE)
 image_regex = re.compile(r"<link rel=\"image_src\" href=\"(.*)\" />", flags=re.MULTILINE)
@@ -34,8 +41,9 @@ def download_post(URL):
         post_title = title_regex.search(raw_post).group(1)
         image_url = image_regex.search(raw_post).group(1)
         points = int(points_regex.search(raw_post).group(1))
-        request = urllib2.urlopen(image_url)
-        image = request.read()
+        image = url_to_image(image_url)
+        histogram = cv2.calcHist([image], [0], None, [256], [0, 256])
+        image_descriptor = histogram
         this_comment = comment_data.copy()
         this_comment["url"] = this_comment["url"].format(post_id)
         this_comment_url = "{}?{}".format(comment_url, urllib.urlencode(this_comment))
