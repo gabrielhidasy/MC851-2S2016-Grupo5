@@ -23,23 +23,23 @@ while True:
     i = i + 1
     hot_file_name = BASE_HOT_FILE_NAME.format(int(time.time()))
     fresh_file_name = BASE_FRESH_FILE_NAME.format(int(time.time()))
-    
+
     try:
         with open(hot_file_name, "a+") as gag:
             for child in hot_xml:
                 if "entry" in child.tag:
                     for entry in child:
                         if "link" in entry.tag:
-                            if entry.attrib["href"] not in seen_urls:
+                            if entry.attrib["href"] not in seen_urls_hot:
                                 seen_urls_hot[entry.attrib["href"]] = 1
                                 gag.write("{}\n".format(entry.attrib["href"]))
-                            
+
         with open(fresh_file_name, "a+") as gag:
             for child in fresh_xml:
                 if "entry" in child.tag:
                     for entry in child:
                         if "link" in entry.tag:
-                            if entry.attrib["href"] not in seen_urls:
+                            if entry.attrib["href"] not in seen_urls_fresh:
                                 seen_urls_fresh[entry.attrib["href"]] = 1
                                 gag.write("{}\n".format(entry.attrib["href"]))
     except KeyError:
