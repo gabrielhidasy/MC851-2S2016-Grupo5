@@ -4,6 +4,7 @@ from pyspark.mllib.regression import LabeledPoint
 from pyspark.mllib.classification import NaiveBayes
 from pyspark import SparkConf
 from pyspark import SparkContext
+from nltk.tokenize import RegexpTokenizer
 
 def read_input():
     f = open('part-00000', 'r')
@@ -42,7 +43,8 @@ def create_vocabulary(data_vector):
     return sorted(list(dict.keys()))
 
 def string2feature(string, vocabulary):
-    tolkens = string.split(' ')
+    tokenizer = RegexpTokenizer(r'\w+')
+    tolkens = tokenizer.tokenize(string)
     hash = {}
     feature = []
     for tk in tolkens:
