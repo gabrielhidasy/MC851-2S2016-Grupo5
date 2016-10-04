@@ -103,5 +103,8 @@ sc = SparkContext(conf=conf)
 trainset = sc.parallelize(get_labeled_points([row[-1] for row in data_train], trainset))
 model = NaiveBayes.train(trainset, 1.0)
 
-result = [model.predict(row) for row in testset]
-print(result)
+index = [i for i in range(0, len(testset)) if model.predict(testset[i]) == 1.0]
+result = np.array([row[0] for row in data_test])
+result = result[index]
+result = map((lambda x : "http://9gag.com/gag/{}".format(x)), result)
+print('\n'.join(result))
