@@ -102,8 +102,9 @@ def get_labeled_points(labels, features):
     return lpts
 
 # Main code
-conf = SparkConf().setAppName('test').setMaster('local[4]')
+conf = SparkConf().setAppName('9Gaguru').setMaster('local[4]')
 sc = SparkContext(conf=conf)
+
 (data_train, data_test) = read_input()
 (trainset, testset) = features_transform(data_train, data_test)
 trainset = sc.parallelize(get_labeled_points([row[-1] for row in data_train], trainset))
